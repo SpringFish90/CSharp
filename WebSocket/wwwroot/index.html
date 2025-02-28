@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹소켓 테스트</title>
+</head>
+<body>
+    <h2>웹소켓 클라이언트</h2>
+    <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
+    <button onclick="sendMessage()">전송</button>
+    <div id="chat"></div>
+
+    <script>// 웹소켓 서버 연결 (로컬 테스트 시)
+        const socket = new WebSocket("wss://localhost:7143/wt/");
+
+        socket.onopen = () => {
+            console.log("서버에 연결됨!");
+            document.getElementById("chat").innerHTML += "<p><b>서버에 연결됨!</b></p>";
+        };
+
+        socket.onmessage = (event) => {
+            console.log("서버 응답:", event.data);
+            document.getElementById("chat").innerHTML += `<p>서버 응답: ${event.data}</p>`;
+        };
+
+        socket.onclose = () => {
+            console.log("서버 연결 종료됨");
+            document.getElementById("chat").innerHTML += "<p><b>서버 연결 종료됨</b></p>";
+        };
+
+        function sendMessage() {
+            const message = document.getElementById("messageInput").value;
+            if (message.trim() !== "") {
+                socket.send(message);
+                document.getElementById("chat").innerHTML += `<p>클라이언트: ${message}</p>`;
+                document.getElementById("messageInput").value = "";
+            }
+        }</script>
+</body>
+</html>
